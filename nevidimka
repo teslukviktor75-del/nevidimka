@@ -1,2 +1,83 @@
 # nevidimka
 Знайомства Чат
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>nevidimka — анкета</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    :root{--bg:#0b1220;--card:#101b33;--text:#eaf0ff;--muted:#a8b3d6;--acc:#6ee7ff;}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Arial;background:var(--bg);color:var(--text);}
+    .wrap{max-width:520px;margin:0 auto;padding:16px;}
+    .card{background:var(--card);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;}
+    h1{margin:6px 0 10px;font-size:22px}
+    label{display:block;margin:10px 0 6px;color:var(--muted);font-size:13px}
+    input,textarea{width:100%;box-sizing:border-box;border-radius:12px;border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.06);color:var(--text);padding:12px;outline:none}
+    textarea{min-height:90px;resize:vertical}
+    .btn{width:100%;margin-top:12px;border:0;border-radius:14px;padding:13px 12px;font-weight:800;
+      background:var(--acc);color:#06202a;font-size:16px}
+    .small{margin-top:10px;color:var(--muted);font-size:12px;line-height:1.35}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>💖 nevidimka — анкета</h1>
+
+      <label>Ім’я</label>
+      <input id="name" placeholder="Напр: Віктор" maxlength="32"/>
+
+      <label>Вік</label>
+      <input id="age" placeholder="Напр: 21" inputmode="numeric" maxlength="3"/>
+
+      <label>Місто</label>
+      <input id="city" placeholder="Напр: Київ" maxlength="32"/>
+
+      <label>Про себе</label>
+      <textarea id="about" placeholder="1–2 речення (можна '-')" maxlength="240"></textarea>
+
+      <button class="btn" id="save">✅ Зберегти анкету</button>
+
+      <div class="small">
+        Після збереження повернись у чат з ботом і натисни <b>🔎 Пошук</b>.
+      </div>
+    </div>
+  </div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+
+  function clean(s){ return (s||"").toString().trim(); }
+
+  document.getElementById("save").onclick = () => {
+    const name = clean(document.getElementById("name").value);
+    const age  = clean(document.getElementById("age").value);
+    const city = clean(document.getElementById("city").value);
+    const about= clean(document.getElementById("about").value);
+
+    if(!name || !age || !city){
+      tg.showAlert("Заповни ім’я, вік і місто.");
+      return;
+    }
+    if(!/^\d+$/.test(age)){
+      tg.showAlert("Вік має бути числом.");
+      return;
+    }
+    const a = parseInt(age,10);
+    if(a < 14 || a > 99){
+      tg.showAlert("Вік має бути 14–99.");
+      return;
+    }
+
+    const payload = {name, age:a, city, about};
+    tg.sendData(JSON.stringify(payload));
+    tg.close(); // закрити mini app після відправки
+  };
+</script>
+</body>
+</html>
