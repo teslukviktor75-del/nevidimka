@@ -1,0 +1,72 @@
+nevidimka-chat-miniapp/
+  server/
+    package.json
+    index.js
+  webapp/
+    index.html
+    app.js
+    style.css
+  README.mdimport express from "express";
+import http from "http";
+import { Server } from "socket.io";
+import cors from "cors";
+
+const app = express();
+app.use(cors());
+app.use(express.json());
+
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
+
+const PORT = process.env.PORT || 3000;
+
+// кімнати: roomId -> [{id, name, text, ts}]
+const rooms = new Map();
+
+io.on("connection", (socket) => {
+  socket.on("join", ({ roomId, user }) => {
+    socket.join(roomId);
+
+    if (!rooms.has(roomId)) rooms.set(roomId, []);
+    socket.emit("history", rooms.get(roomId));
+
+    socket.to(roomId).emit("system", {
+      text: `${user?.name || "Хтось"} зайшов у чат`,
+      ts: Date.now(),
+    });
+  });
+
+  socket.on("message", ({ roomId, msg }) => {
+    if (!roomId || !msg?.text) return;
+
+    const message = {
+      id: cryptoRandomId(),
+      name: msg.name || "Невидимка",
+      text: String(msg.text).slice(0, 1000),
+      ts: Date.now(),
+    };
+
+    if (!rooms.has(roomId)) rooms.set(roomId, []);
+    rooms.get(roomId).push(message);
+
+    // обмежимо історію
+    if (rooms.get(roomId).length > 200) rooms.get(roomId).shift();
+
+    io.to(roomId).emit("message", message);
+  });
+
+  socket.on("disconnect", () => {});
+});
+
+app.get("/health", (_, res) => res.json({ ok: true }));
+
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+
+function cryptoRandomId() {
+  // без залежностей
+  return Math.random().toString(16).slice(2) + Date.now().toString(16);
+}
