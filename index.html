@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>nevidimka</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  body{margin:0;font-family:system-ui;background:#000;color:#fff}
+  header{padding:15px;font-size:22px;font-weight:800;border-bottom:1px solid #222}
+  .container{padding:15px;padding-bottom:80px}
+  .card{background:#111;padding:15px;border-radius:12px;border:1px solid #222;margin-bottom:12px}
+  .tabbar{position:fixed;bottom:0;left:0;right:0;display:flex;background:#111;border-top:1px solid #222}
+  .tabbar button{flex:1;padding:15px;background:none;color:#fff;border:none}
+</style>
+</head>
+<body>
+
+<header>nevidimka</header>
+
+<div class="container" id="content">Завантаження...</div>
+
+<div class="tabbar">
+  <button onclick="showProfile()">Профіль</button>
+  <button onclick="showChats()">Чати</button>
+</div>
+
+<script>
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); tg.ready(); }
+
+const user = tg?.initDataUnsafe?.user || null;
+
+function showProfile(){
+  if(!user){
+    document.getElementById("content").innerHTML = `
+      <div class="card">
+        <h3>Профіль</h3>
+        <p>Відкрий це через Telegram-бота (Mini App), тоді підтягнеться профіль.</p>
+      </div>
+    `;
+    return;
+  }
+  document.getElementById("content").innerHTML = `
+    <div class="card">
+      <h3>Профіль</h3>
+      <p><b>ID:</b> ${user.id}</p>
+      <p><b>Ім'я:</b> ${user.first_name || ""}</p>
+      <p><b>Username:</b> @${user.username || "немає"}</p>
+    </div>
+  `;
+}
+
+function showChats(){
+  document.getElementById("content").innerHTML = `
+    <div class="card">
+      <h3>Чати</h3>
+      <p>MVP: список чатів буде тут. Далі підключимо базу і месенджер.</p>
+    </div>
+  `;
+}
+
+showProfile();
+</script>
+
+</body>
+</html>
