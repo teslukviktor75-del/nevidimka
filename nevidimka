@@ -1,3 +1,7 @@
-git remote add origin https://github.com/teslukviktor75-del/nevidimka-chat.git
-git branch -M main
-git push -u origin main
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.expand();
+  console.log(tg.initDataUnsafe);
+</script>
