@@ -142,4 +142,4 @@ small{color: var(--muted);}
   background: rgba(255,45,122,.12);
   border-color: rgba(255,45,122,.35);
 }
-.bubble .t{font-size: 12px; color: var(--muted); margin-bottom: 4px;}
+.bubble .t{font-size: 12px; color: var(--muted); margin-bottom: 4px;} 
