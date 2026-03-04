@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Nevidimka — Знайомства</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@400;500;600;700&display=swap');
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:#09091a;color:#edeeff;font-family:'Manrope',Arial,sans-serif;overflow-x:hidden}
+
+/* BG */
+.bg-layer{position:fixed;inset:0;z-index:0;pointer-events:none;background:#09091a;overflow:hidden}
+.bg-layer::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(124,92,252,.22) 0%,transparent 70%);top:-150px;left:-150px}
+.bg-layer::after{content:'';position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(224,64,251,.15) 0%,transparent 70%);bottom:80px;right:-100px}
+
+/* PAGE */
+.page{display:none;animation:fin .35s ease}
+.page.active{display:block}
+@keyframes fin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+.page-wrap{min-height:100vh;padding-bottom:72px;position:relative;z-index:1}
+
+/* TOP NAV */
+.top-nav{position:sticky;top:0;z-index:50;background:rgba(9,9,26,.9);backdrop-filter:blur(16px);border-bottom:1px solid rgba(124,92,252,.15);padding:14px 20px;display:flex;align-items:center;justify-content:space-between}
+.logo{font-family:'Unbounded',sans-serif;font-weight:900;font-size:17px;background:linear-gradient(90deg,#7c5cfc,#e040fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.top-badge{background:linear-gradient(135deg,#7c5cfc,#e040fb);color:#fff;font-size:10px;font-weight:700;padding:4px 11px;border-radius:20px;letter-spacing:.6px;text-transform:uppercase}
+
+/* HERO */
+.hero{padding:48px 20px 32px;text-align:center}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;background:rgba(0,229,255,.08);border:1px solid rgba(0,229,255,.2);padding:5px 14px;border-radius:20px;font-size:11px;color:#00e5ff;font-weight:600;letter-spacing:.8px;text-transform:uppercase;margin-bottom:24px}
+.pdot{width:6px;height:6px;background:#00e5ff;border-radius:50%;animation:pdot 2s ease-in-out infinite}
+@keyframes pdot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.3;transform:scale(.6)}}
+.hero h1{font-family:'Unbounded',sans-serif;font-size:clamp(26px,7vw,46px);font-weight:900;line-height:1.15;letter-spacing:-.5px;margin-bottom:16px}
+.grad-text{background:linear-gradient(90deg,#7c5cfc,#e040fb,#00e5ff);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;background-size:200%;animation:flow 4s linear infinite}
+@keyframes flow{0%{background-position:0%}100%{background-position:200%}}
+.hero-sub{color:#7b7fa8;font-size:14px;line-height:1.7;max-width:320px;margin:0 auto 28px}
+.hero-btns{display:flex;flex-direction:column;align-items:center;gap:10px}
+
+/* BTN */
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;max-width:280px;padding:15px 28px;border-radius:50px;border:none;font-family:'Manrope',Arial,sans-serif;font-size:15px;font-weight:700;cursor:pointer;text-decoration:none;transition:transform .15s,box-shadow .15s;letter-spacing:.2px}
+.btn:active{transform:scale(.96)}
+.btn-main{background:linear-gradient(135deg,#7c5cfc,#e040fb);color:#fff;box-shadow:0 8px 28px rgba(124,92,252,.45)}
+.btn-ghost{background:none;color:#7b7fa8;text-decoration:underline;text-underline-offset:4px;font-size:13px;max-width:none}
+
+/* STATS */
+.stats{display:flex;margin:0 20px 40px;border:1px solid rgba(124,92,252,.15);border-radius:18px;overflow:hidden;background:rgba(19,22,42,.7);backdrop-filter:blur(12px)}
+.stat{flex:1;padding:18px 10px;text-align:center;border-right:1px solid rgba(124,92,252,.15)}
+.stat:last-child{border-right:none}
+.sv{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:900;background:linear-gradient(135deg,#7c5cfc,#e040fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sl{font-size:10px;color:#7b7fa8;margin-top:3px;font-weight:500}
+
+/* SEC */
+.sec{padding:0 20px 40px}
+.sec-title{font-family:'Unbounded',sans-serif;font-size:14px;font-weight:700;color:#edeeff;margin-bottom:18px;display:flex;align-items:center;gap:8px}
+.sec-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(124,92,252,.3),transparent)}
+
+/* CARDS */
+.cards-row{display:flex;gap:12px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch;scroll-snap-type:x mandatory}
+.cards-row::-webkit-scrollbar{display:none}
+.pcard{min-width:150px;background:#13162a;border:1px solid rgba(124,92,252,.15);border-radius:18px;overflow:hidden;flex-shrink:0;scroll-snap-align:start;cursor:pointer;position:relative;transition:transform .15s}
+.pcard:active{transform:scale(.96)}
+.pavatar{width:100%;aspect-ratio:3/4;display:flex;align-items:center;justify-content:center;font-size:52px;position:relative}
+.pinfo{padding:10px 12px 12px}
+.pname{font-size:13px;font-weight:700;margin-bottom:2px;color:#edeeff}
+.ploc{font-size:11px;color:#7b7fa8}
+.ptags{display:flex;gap:5px;flex-wrap:wrap;margin-top:7px}
+.ptag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:7px;background:rgba(124,92,252,.15);color:#a085ff;border:1px solid rgba(124,92,252,.2)}
+.online-dot{position:absolute;top:9px;right:9px;width:9px;height:9px;background:#00e564;border-radius:50%;border:2px solid #13162a;box-shadow:0 0 6px rgba(0,229,100,.7)}
+.newbadge{position:absolute;top:9px;left:9px;background:linear-gradient(135deg,#e040fb,#7c5cfc);color:#fff;font-size:9px;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:.4px;text-transform:uppercase}
+
+/* MATCH BANNER */
+.mbanner{margin:0 20px 40px;background:linear-gradient(135deg,rgba(124,92,252,.12),rgba(224,64,251,.08));border:1px solid rgba(124,92,252,.25);border-radius:22px;padding:26px 22px;text-align:center;position:relative;overflow:hidden}
+.mbanner::after{content:'';position:absolute;top:-30px;right:-30px;width:100px;height:100px;border-radius:50%;background:rgba(224,64,251,.15);filter:blur(25px)}
+.mbanner h2{font-family:'Unbounded',sans-serif;font-size:18px;font-weight:900;margin-bottom:8px}
+.mbanner p{font-size:13px;color:#7b7fa8;line-height:1.6;margin-bottom:18px}
+
+/* FEATURES */
+.feats{display:flex;flex-direction:column;gap:10px}
+.feat{background:rgba(19,22,42,.75);border:1px solid rgba(124,92,252,.13);border-radius:16px;padding:16px;display:flex;gap:14px;align-items:flex-start}
+.ficon{width:44px;height:44px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--fb,rgba(124,92,252,.12));border:1px solid var(--fc,rgba(124,92,252,.18))}
+.ftitle{font-size:13px;font-weight:700;margin-bottom:3px}
+.fdesc{font-size:12px;color:#7b7fa8;line-height:1.6}
+
+/* STEPS */
+.steps{display:flex;flex-direction:column}
+.step{display:flex;gap:14px;padding-bottom:24px;position:relative}
+.step:not(:last-child)::before{content:'';position:absolute;left:18px;top:44px;bottom:0;width:1px;background:linear-gradient(180deg,rgba(124,92,252,.4),transparent)}
+.snum{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#e040fb);display:flex;align-items:center;justify-content:center;font-family:'Unbounded',sans-serif;font-size:12px;font-weight:900;color:#fff;flex-shrink:0;box-shadow:0 4px 14px rgba(124,92,252,.4)}
+.sbody{padding-top:6px}
+.stitle{font-size:13px;font-weight:700;margin-bottom:3px}
+.sdesc{font-size:12px;color:#7b7fa8;line-height:1.6}
+
+/* ── DASHBOARD (after login) ────────── */
+.dash-header{padding:24px 20px 16px;display:flex;align-items:center;justify-content:space-between}
+.dash-greet{font-family:'Unbounded',sans-serif;font-size:16px;font-weight:900}
+.dash-greet span{display:block;font-family:'Manrope',sans-serif;font-size:12px;color:#7b7fa8;font-weight:500;margin-top:2px}
+.avatar-me{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#e040fb);display:flex;align-items:center;justify-content:center;font-size:22px;border:2px solid rgba(124,92,252,.4)}
+
+.dash-cards{display:flex;gap:12px;padding:0 20px 28px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.dash-cards::-webkit-scrollbar{display:none}
+.dcard{min-width:140px;flex-shrink:0;background:#13162a;border:1px solid rgba(124,92,252,.15);border-radius:18px;padding:16px;text-align:center;cursor:pointer;transition:transform .15s}
+.dcard:active{transform:scale(.96)}
+.dcard-ico{font-size:30px;margin-bottom:8px}
+.dcard-val{font-family:'Unbounded',sans-serif;font-size:22px;font-weight:900;background:linear-gradient(135deg,#7c5cfc,#e040fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.dcard-lbl{font-size:11px;color:#7b7fa8;margin-top:3px;font-weight:500}
+
+.like-strip{padding:0 20px 28px}
+.like-title{font-family:'Unbounded',sans-serif;font-size:13px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.like-title::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(124,92,252,.3),transparent)}
+
+.like-row{display:flex;gap:10px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+.like-row::-webkit-scrollbar{display:none}
+.lcard{min-width:100px;flex-shrink:0;background:#13162a;border:1px solid rgba(124,92,252,.15);border-radius:16px;overflow:hidden;cursor:pointer;transition:transform .15s;position:relative}
+.lcard:active{transform:scale(.95)}
+.lcard-av{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:36px}
+.lcard-name{font-size:11px;font-weight:700;padding:6px 8px 8px;text-align:center}
+.lcard-new{position:absolute;top:6px;right:6px;width:9px;height:9px;background:#e040fb;border-radius:50%;border:2px solid #13162a}
+
+.action-strip{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:0 20px 28px}
+.acard{background:#13162a;border:1px solid rgba(124,92,252,.15);border-radius:18px;padding:18px 16px;cursor:pointer;transition:transform .15s;position:relative;overflow:hidden}
+.acard:active{transform:scale(.97)}
+.acard::before{content:'';position:absolute;top:-20px;right:-20px;width:60px;height:60px;border-radius:50%;background:var(--ac,rgba(124,92,252,.15));filter:blur(15px)}
+.acard-ico{font-size:26px;margin-bottom:8px}
+.acard-title{font-size:12px;font-weight:700;margin-bottom:3px}
+.acard-sub{font-size:11px;color:#7b7fa8}
+
+/* SWIPE PAGE */
+.swipe-wrap{padding:16px 20px 20px;display:flex;flex-direction:column;align-items:center}
+.swipe-card{width:100%;max-width:320px;background:#13162a;border:1px solid rgba(124,92,252,.2);border-radius:24px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5);position:relative}
+.swipe-avatar{width:100%;aspect-ratio:.75;display:flex;align-items:center;justify-content:center;font-size:80px;position:relative}
+.swipe-gradient{position:absolute;bottom:0;left:0;right:0;height:50%;background:linear-gradient(transparent,rgba(9,9,26,.95))}
+.swipe-info{padding:16px 18px 18px}
+.swipe-name{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px}
+.swipe-meta{font-size:13px;color:#7b7fa8;margin-bottom:10px}
+.swipe-bio{font-size:13px;color:#c0c4e8;line-height:1.6}
+.swipe-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+.swipe-actions{display:flex;justify-content:center;gap:20px;padding:20px 20px 0}
+.sact{width:60px;height:60px;border-radius:50%;border:none;display:flex;align-items:center;justify-content:center;font-size:24px;cursor:pointer;transition:transform .15s,box-shadow .15s}
+.sact:active{transform:scale(.9)}
+.sact-no{background:#1e1535;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.sact-yes{background:linear-gradient(135deg,#7c5cfc,#e040fb);box-shadow:0 6px 22px rgba(124,92,252,.5)}
+.sact-super{background:#1e2535;box-shadow:0 4px 16px rgba(0,0,0,.4)}
+.swipe-counter{font-size:12px;color:#7b7fa8;text-align:center;margin-top:16px}
+
+/* PROFILE PAGE */
+.prof-head{padding:32px 20px 20px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.prof-av{width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#e040fb);display:flex;align-items:center;justify-content:center;font-size:44px;margin-bottom:14px;border:3px solid rgba(124,92,252,.4);box-shadow:0 8px 28px rgba(124,92,252,.35);overflow:hidden;object-fit:cover}
+.prof-av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.prof-name{font-family:'Unbounded',sans-serif;font-size:20px;font-weight:900;margin-bottom:4px}
+.prof-sub{font-size:13px;color:#7b7fa8;margin-bottom:16px}
+.prof-stats{display:flex;gap:0;border:1px solid rgba(124,92,252,.15);border-radius:16px;overflow:hidden;width:100%;max-width:300px;margin-bottom:24px;background:rgba(19,22,42,.7)}
+.ps{flex:1;padding:14px 8px;text-align:center;border-right:1px solid rgba(124,92,252,.15)}
+.ps:last-child{border-right:none}
+.psv{font-family:'Unbounded',sans-serif;font-size:17px;font-weight:900;background:linear-gradient(135deg,#7c5cfc,#e040fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.psl{font-size:10px;color:#7b7fa8;margin-top:2px}
+.prof-edit{background:rgba(124,92,252,.12);border:1px solid rgba(124,92,252,.25);color:#a085ff;font-family:'Manrope',Arial,sans-serif;font-size:13px;font-weight:700;padding:10px 24px;border-radius:50px;cursor:pointer;transition:transform .15s}
+.prof-edit:active{transform:scale(.96)}
+
+.prof-menu{padding:0 20px 20px;display:flex;flex-direction:column;gap:8px}
+.pmrow{background:#13162a;border:1px solid rgba(124,92,252,.12);border-radius:14px;padding:15px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:transform .15s}
+.pmrow:active{transform:scale(.98)}
+.pmrow-ico{font-size:20px;width:36px;text-align:center}
+.pmrow-txt{flex:1}
+.pmrow-title{font-size:13px;font-weight:700}
+.pmrow-sub{font-size:11px;color:#7b7fa8;margin-top:1px}
+.pmrow-arr{color:#7b7fa8;font-size:16px}
+
+/* EDIT PAGE */
+.edit-photo-area{padding:24px 20px 0;display:flex;flex-direction:column;align-items:center;gap:16px}
+.edit-main-photo{width:110px;height:110px;border-radius:50%;background:linear-gradient(135deg,#7c5cfc,#e040fb);display:flex;align-items:center;justify-content:center;font-size:52px;border:3px solid rgba(124,92,252,.4);box-shadow:0 8px 28px rgba(124,92,252,.35);overflow:hidden;position:relative;cursor:pointer}
+.edit-main-photo img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+.edit-main-photo .cam-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;border-radius:50%;opacity:0;transition:opacity .2s}
+.edit-main-photo:active .cam-overlay{opacity:1}
+.cam-overlay span{font-size:28px}
+.edit-photo-hint{font-size:12px;color:#7b7fa8;text-align:center}
+
+.photo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:16px 20px 0}
+.photo-slot{aspect-ratio:1;border-radius:14px;background:#13162a;border:1.5px dashed rgba(124,92,252,.25);display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:border-color .2s}
+.photo-slot:active{border-color:#7c5cfc}
+.photo-slot img{width:100%;height:100%;object-fit:cover;border-radius:12px}
+.photo-slot .add-ico{font-size:26px;color:rgba(124,92,252,.5)}
+.photo-slot .del-btn{position:absolute;top:5px;right:5px;background:rgba(224,64,251,.85);border:none;border-radius:50%;width:22px;height:22px;color:#fff;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+
+.edit-form{padding:20px 20px 0}
+.edit-save{padding:16px 20px 32px}
+.edit-save .btn{max-width:none;width:100%}
+
+/* toast */
+.toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);z-index:999;background:linear-gradient(135deg,#7c5cfc,#e040fb);color:#fff;font-size:13px;font-weight:700;padding:12px 24px;border-radius:50px;opacity:0;transition:opacity .3s,transform .3s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 24px rgba(124,92,252,.5)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;z-index:100;background:rgba(9,9,26,.96);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-top:1px solid rgba(124,92,252,.18);display:flex;justify-content:space-around;align-items:flex-end;padding:10px 0 14px;height:62px}
+.ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;opacity:.4;transition:opacity .15s;min-width:52px;position:relative}
+.ni.on{opacity:1}
+.ni-ico{font-size:22px;line-height:1}
+.ni-lbl{font-size:10px;font-weight:600;letter-spacing:.2px;color:#7b7fa8}
+.ni.on .ni-lbl{background:linear-gradient(90deg,#7c5cfc,#e040fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.ni-center .ni-ico{background:linear-gradient(135deg,#7c5cfc,#e040fb);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-top:-12px;box-shadow:0 4px 18px rgba(124,92,252,.55)}
+.ni-center{opacity:1!important}
+.ndot{position:absolute;top:0;right:6px;width:7px;height:7px;background:#e040fb;border-radius:50%;border:1.5px solid #09091a}
+
+/* MODAL */
+.overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(5,5,18,.82);backdrop-filter:blur(6px);align-items:flex-end;justify-content:center}
+.overlay.open{display:flex;animation:fin .2s}
+.modal{background:#0e1020;border:1px solid rgba(124,92,252,.18);border-radius:26px 26px 0 0;padding:24px 22px 36px;width:100%;max-width:480px;animation:sup .3s cubic-bezier(.34,1.56,.64,1);max-height:85vh;overflow-y:auto;position:relative}
+@keyframes sup{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.mhandle{width:38px;height:4px;background:rgba(124,92,252,.25);border-radius:2px;margin:0 auto 22px}
+.modal h2{font-family:'Unbounded',sans-serif;font-size:19px;font-weight:900;text-align:center;margin-bottom:6px}
+.modal-sub{font-size:13px;color:#7b7fa8;text-align:center;margin-bottom:24px}
+.mclose{position:absolute;top:18px;right:18px;background:rgba(124,92,252,.12);border:none;color:#7b7fa8;width:32px;height:32px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px}
+.fg{margin-bottom:14px}
+.fl{font-size:11px;font-weight:600;color:#7b7fa8;margin-bottom:7px;display:block}
+.fi{width:100%;background:#13162a;border:1px solid rgba(124,92,252,.15);border-radius:13px;padding:13px 15px;color:#edeeff;font-family:'Manrope',Arial,sans-serif;font-size:14px;outline:none;transition:border-color .2s;-webkit-appearance:none}
+.fi:focus{border-color:#7c5cfc}
+.fi::placeholder{color:#4a4e6a}
+.gbts{display:flex;gap:8px}
+.gbt{flex:1;padding:11px 6px;border-radius:12px;border:1px solid rgba(124,92,252,.15);background:#13162a;color:#edeeff;font-family:'Manrope',Arial,sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;text-align:center}
+.gbt.sel{background:rgba(124,92,252,.2);border-color:#7c5cfc;color:#a085ff}
+.mnote{font-size:11px;color:#4a4e6a;text-align:center;margin-top:12px;line-height:1.5}
+
+/* SUCCESS ANIMATION */
+.success-screen{position:fixed;inset:0;z-index:300;background:#09091a;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px}
+.success-screen.hidden{display:none}
+.success-ico{font-size:72px;margin-bottom:20px;animation:pop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
+.success-title{font-family:'Unbounded',sans-serif;font-size:24px;font-weight:900;margin-bottom:10px;background:linear-gradient(90deg,#7c5cfc,#e040fb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.success-sub{font-size:14px;color:#7b7fa8;line-height:1.7;max-width:280px}
+.success-bar{width:200px;height:4px;background:rgba(124,92,252,.2);border-radius:2px;margin-top:32px;overflow:hidden}
+.success-prog{height:100%;background:linear-gradient(90deg,#7c5cfc,#e040fb);border-radius:2px;animation:prog 2s linear forwards}
+@keyframes prog{from{width:0}to{width:100%}}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+
+<!-- ══ SUCCESS SCREEN ══════════════════════ -->
+<div class="success-screen hidden" id="successScreen">
+  <div class="success-ico">🎉</div>
+  <div class="success-title">Вітаємо!</div>
+  <p class="success-sub">Твоя анкета створена. Заходь у стрічку — тебе вже хтось шукає 💜</p>
+  <div class="success-bar"><div class="success-prog"></div></div>
+</div>
+
+<!-- ══ LANDING PAGE ════════════════════════ -->
+<div id="landingPage" class="page active">
+  <div class="page-wrap">
+    <nav class="top-nav">
+      <div class="logo">Nevidimka</div>
+      <div class="top-badge">🔥 Beta</div>
+    </nav>
+    <div>
+      <section class="hero">
+        <div class="eyebrow"><div class="pdot"></div><span id="onlineCount">1 247</span> онлайн зараз</div>
+        <h1><span class="grad-text">nevidimka</span></h1>
+
+        <div class="hero-btns">
+          <button class="btn btn-main" onclick="openM()">🚀 Почати знайомства</button>
+          <button class="btn btn-ghost" onclick="document.querySelector('.cards-row').scrollIntoView({behavior:'smooth'})">Переглянути анкети →</button>
+        </div>
+      </section>
+
+      <div class="stats">
+        <div class="stat"><div class="sv" id="statMembers">48 000</div><div class="sl">Учасників</div></div>
+        <div class="stat"><div class="sv" id="statPairs">3 200</div><div class="sl">Пар</div></div>
+        <div class="stat"><div class="sv">98%</div><div class="sl">Безпечно</div></div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">✨ Нові анкети</div>
+        <div class="cards-row">
+          <div class="pcard" onclick="openM()"><div class="online-dot"></div><div class="newbadge">Новий</div><div class="pavatar" style="background:linear-gradient(145deg,#1a0a40,#2d0b5a)">🌸</div><div class="pinfo"><div class="pname">Аліна, 23</div><div class="ploc">📍 Київ</div><div class="ptags"><span class="ptag">💃 Активна</span><span class="ptag">🎨 Арт</span></div></div></div>
+          <div class="pcard" onclick="openM()"><div class="pavatar" style="background:linear-gradient(145deg,#0a1540,#0b2a5a)">🌊</div><div class="pinfo"><div class="pname">Максим, 27</div><div class="ploc">📍 Львів</div><div class="ptags"><span class="ptag">🏄 Спорт</span><span class="ptag">🎸 Музика</span></div></div></div>
+          <div class="pcard" onclick="openM()"><div class="online-dot"></div><div class="pavatar" style="background:linear-gradient(145deg,#2a0a2a,#4a0b3a)">🌙</div><div class="pinfo"><div class="pname">Соня, 25</div><div class="ploc">📍 Одеса</div><div class="ptags"><span class="ptag">📚 Книги</span><span class="ptag">✈️ Тревел</span></div></div></div>
+          <div class="pcard" onclick="openM()"><div class="newbadge">Новий</div><div class="pavatar" style="background:linear-gradient(145deg,#0a2a1a,#0b4028)">🍃</div><div class="pinfo"><div class="pname">Данило, 29</div><div class="ploc">📍 Харків</div><div class="ptags"><span class="ptag">🌿 Природа</span><span class="ptag">📷 Фото</span></div></div></div>
+          <div class="pcard" onclick="openM()"><div class="online-dot"></div><div class="pavatar" style="background:linear-gradient(145deg,#2a1a00,#4a2e00)">☀️</div><div class="pinfo"><div class="pname">Катя, 22</div><div class="ploc">📍 Дніпро</div><div class="ptags"><span class="ptag">☕ Кава</span><span class="ptag">🎬 Кіно</span></div></div></div>
+        </div>
+      </div>
+
+      <div class="mbanner">
+        <h2>👁️ Хто переглядав тебе?</h2>
+        <p>Дізнайся хто зацікавився твоєю анкетою — анонімно та безпечно.</p>
+        <button class="btn btn-main" style="margin:0 auto" onclick="openM()">Переглянути ❤️</button>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">🛡️ Переваги</div>
+        <div class="feats">
+          <div class="feat"><div class="ficon" style="--fb:rgba(0,229,255,.1);--fc:rgba(0,229,255,.2)">👻</div><div><div class="ftitle">100% Анонімність</div><div class="fdesc">Твої дані захищені. Відкривайся лише тоді, коли сам захочеш.</div></div></div>
+          <div class="feat"><div class="ficon" style="--fb:rgba(224,64,251,.1);--fc:rgba(224,64,251,.2)">💌</div><div><div class="ftitle">Взаємні симпатії</div><div class="fdesc">Повідомлення лише після взаємного лайку — ніякого спаму.</div></div></div>
+          <div class="feat"><div class="ficon" style="--fb:rgba(255,200,0,.1);--fc:rgba(255,200,0,.2)">⚡</div><div><div class="ftitle">Швидкі знайомства</div><div class="fdesc">Алгоритм підбирає найкращі збіги за інтересами та місцем.</div></div></div>
+          <div class="feat"><div class="ficon" style="--fb:rgba(0,200,130,.1);--fc:rgba(0,200,130,.2)">🔒</div><div><div class="ftitle">Верифікація</div><div class="fdesc">Усі анкети перевірені через Telegram — реальні люди без ботів.</div></div></div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-title">⚙️ Як це працює</div>
+        <div class="steps">
+          <div class="step"><div class="snum">1</div><div class="sbody"><div class="stitle">Створи анкету за хвилину</div><div class="sdesc">Кілька фото, кілька слів про себе — і ти вже в грі.</div></div></div>
+          <div class="step"><div class="snum">2</div><div class="sbody"><div class="stitle">Ставай невидимим або помітним</div><div class="sdesc">Переглядай анкети анонімно або відкрийся тим, хто зацікавив.</div></div></div>
+          <div class="step"><div class="snum">3</div><div class="sbody"><div class="stitle">Матч → Чат у Telegram</div><div class="sdesc">При взаємному інтересі відкривається чат у Telegram.</div></div></div>
+          <div class="step"><div class="snum">4</div><div class="sbody"><div class="stitle">Зустрінься в реальному житті</div><div class="sdesc">Від першого повідомлення до першого побачення — ми з тобою. 💜</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HOME (after login) ══════════════════ -->
+<div id="homePage" class="page">
+  <div class="page-wrap">
+    <nav class="top-nav">
+      <div class="logo">Nevidimka</div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <div style="font-size:11px;color:#00e5ff;font-weight:600">● Онлайн</div>
+      </div>
+    </nav>
+    <div>
+      <div class="dash-header">
+        <div class="dash-greet">
+          Привіт, <span id="userNameDisplay">nevidimka</span>
+          <span>Знайди свою другу половинку 💜</span>
+        </div>
+        <div class="avatar-me" id="avatarMe">😊</div>
+      </div>
+
+      <div class="dash-cards">
+        <div class="dcard" onclick="showPage('swipePage');setNi(1)">
+          <div class="dcard-ico">💫</div>
+          <div class="dcard-val">24</div>
+          <div class="dcard-lbl">Нових анкет</div>
+        </div>
+        <div class="dcard">
+          <div class="dcard-ico">❤️</div>
+          <div class="dcard-val">7</div>
+          <div class="dcard-lbl">Симпатій</div>
+        </div>
+        <div class="dcard">
+          <div class="dcard-ico">✨</div>
+          <div class="dcard-val">3</div>
+          <div class="dcard-lbl">Матчі</div>
+        </div>
+        <div class="dcard">
+          <div class="dcard-ico">👁️</div>
+          <div class="dcard-val">41</div>
+          <div class="dcard-lbl">Переглядів</div>
+        </div>
+      </div>
+
+      <div class="like-strip">
+        <div class="like-title">💝 Тебе вподобали</div>
+        <div class="like-row">
+          <div class="lcard" onclick="showPage('swipePage');setNi(1)"><div class="lcard-new"></div><div class="lcard-av" style="background:linear-gradient(145deg,#1a0a40,#2d0b5a)">🌸</div><div class="lcard-name">Аліна, 23</div></div>
+          <div class="lcard" onclick="showPage('swipePage');setNi(1)"><div class="lcard-new"></div><div class="lcard-av" style="background:linear-gradient(145deg,#2a0a2a,#4a0b3a)">🌙</div><div class="lcard-name">Соня, 25</div></div>
+          <div class="lcard" onclick="showPage('swipePage');setNi(1)"><div class="lcard-av" style="background:linear-gradient(145deg,#2a1a00,#4a2e00)">☀️</div><div class="lcard-name">Катя, 22</div></div>
+          <div class="lcard" onclick="showPage('swipePage');setNi(1)"><div class="lcard-av" style="background:linear-gradient(145deg,#0a2a1a,#0b4028)">🍃</div><div class="lcard-name">Оля, 26</div></div>
+        </div>
+      </div>
+
+      <div class="action-strip">
+        <div class="acard" style="--ac:rgba(124,92,252,.2)" onclick="showPage('swipePage');setNi(1)">
+          <div class="acard-ico">💫</div>
+          <div class="acard-title">Стрічка</div>
+          <div class="acard-sub">Знайти нові анкети</div>
+        </div>
+        <div class="acard" style="--ac:rgba(224,64,251,.2)">
+          <div class="acard-ico">💬</div>
+          <div class="acard-title">Повідомлення</div>
+          <div class="acard-sub">3 нових чати</div>
+        </div>
+        <div class="acard" style="--ac:rgba(0,229,255,.15)">
+          <div class="acard-ico">⭐</div>
+          <div class="acard-title">Преміум</div>
+          <div class="acard-sub">Більше можливостей</div>
+        </div>
+        <div class="acard" style="--ac:rgba(255,180,0,.15)" onclick="showPage('profilePage');setNi(4)">
+          <div class="acard-ico">✏️</div>
+          <div class="acard-title">Мій профіль</div>
+          <div class="acard-sub">Редагувати анкету</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SWIPE PAGE ══════════════════════════ -->
+<div id="swipePage" class="page">
+  <div class="page-wrap">
+    <nav class="top-nav">
+      <div class="logo">Стрічка</div>
+      <div style="font-size:12px;color:#7b7fa8">24 анкети</div>
+    </nav>
+    <div class="swipe-wrap">
+      <div class="swipe-card" id="swipeCard">
+        <div class="swipe-avatar" style="background:linear-gradient(145deg,#1a0a40,#2d0b5a)" id="swipeAv">
+          <span id="swipeEmoji" style="font-size:80px">🌸</span>
+          <div class="swipe-gradient"></div>
+        </div>
+        <div class="swipe-info">
+          <div class="swipe-name" id="swipeName">Аліна, 23</div>
+          <div class="swipe-meta" id="swipeMeta">📍 Київ · онлайн</div>
+          <div class="swipe-bio" id="swipeBio">Люблю живопис, подорожі та людей, які вміють сміятися над собою. Шукаю когось справжнього.</div>
+          <div class="swipe-tags">
+            <span class="ptag">🎨 Арт</span><span class="ptag">✈️ Тревел</span><span class="ptag">😂 Гумор</span>
+          </div>
+        </div>
+      </div>
+      <div class="swipe-actions">
+        <button class="sact sact-no" onclick="nextSwipe(-1)" title="Пропустити">👎</button>
+        <button class="sact sact-super" onclick="nextSwipe(0)" title="Супер лайк">⭐</button>
+        <button class="sact sact-yes" onclick="nextSwipe(1)" title="Лайк">❤️</button>
+      </div>
+      <div class="swipe-counter" id="swipeCounter">Анкета 1 з 24</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PROFILE PAGE ════════════════════════ -->
+<div id="profilePage" class="page">
+  <div class="page-wrap">
+    <nav class="top-nav">
+      <div class="logo">Мій профіль</div>
+    </nav>
+    <div>
+      <div class="prof-head">
+        <div class="prof-av" id="profAvatar">😊</div>
+        <div class="prof-name" id="profName">nevidimka</div>
+        <div class="prof-sub" id="profSub">📍 Місто · 18 років</div>
+        <div class="prof-stats">
+          <div class="ps"><div class="psv">41</div><div class="psl">Перегляди</div></div>
+          <div class="ps"><div class="psv">7</div><div class="psl">Симпатії</div></div>
+          <div class="ps"><div class="psv">3</div><div class="psl">Матчі</div></div>
+        </div>
+        <button class="prof-edit" onclick="openEdit()">✏️ Редагувати анкету</button>
+      </div>
+      <div class="prof-menu">
+        <div class="pmrow"><div class="pmrow-ico">🔔</div><div class="pmrow-txt"><div class="pmrow-title">Сповіщення</div><div class="pmrow-sub">Керування повідомленнями</div></div><div class="pmrow-arr">›</div></div>
+        <div class="pmrow"><div class="pmrow-ico">🛡️</div><div class="pmrow-txt"><div class="pmrow-title">Конфіденційність</div><div class="pmrow-sub">Хто може тебе бачити</div></div><div class="pmrow-arr">›</div></div>
+        <div class="pmrow"><div class="pmrow-ico">⭐</div><div class="pmrow-txt"><div class="pmrow-title">Преміум</div><div class="pmrow-sub">Більше лайків та можливостей</div></div><div class="pmrow-arr">›</div></div>
+        <div class="pmrow"><div class="pmrow-ico">🌐</div><div class="pmrow-txt"><div class="pmrow-title">Мова</div><div class="pmrow-sub">Українська</div></div><div class="pmrow-arr">›</div></div>
+        <div class="pmrow" onclick="logout()"><div class="pmrow-ico">🚪</div><div class="pmrow-txt"><div class="pmrow-title" style="color:#e040fb">Вийти</div><div class="pmrow-sub">Повернутися на головну</div></div><div class="pmrow-arr">›</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ EDIT PAGE ═══════════════════════════ -->
+<div id="editPage" class="page">
+  <div class="page-wrap">
+    <nav class="top-nav">
+      <button onclick="showPage('profilePage');setNi(4)" style="background:none;border:none;color:#a085ff;font-size:22px;cursor:pointer;padding:0">‹</button>
+      <div class="logo" style="font-size:15px">Редагування</div>
+      <div style="width:30px"></div>
+    </nav>
+    <div>
+
+      <!-- Main photo -->
+      <div class="edit-photo-area">
+        <div class="edit-main-photo" id="editMainPhoto" onclick="triggerPhoto('main')">
+          <span id="editMainEmoji">😊</span>
+          <div class="cam-overlay"><span>📷</span></div>
+        </div>
+        <div class="edit-photo-hint">Натисни на фото, щоб змінити<br><span style="color:rgba(124,92,252,.7)">Головне фото анкети</span></div>
+      </div>
+
+      <!-- Photo grid -->
+      <div style="padding:14px 20px 4px">
+        <div style="font-size:11px;font-weight:600;color:#7b7fa8;margin-bottom:10px">📸 ФОТО ГАЛЕРЕЇ (до 6 фото)</div>
+      </div>
+      <div class="photo-grid" id="photoGrid">
+        <div class="photo-slot" id="slot0" onclick="triggerPhoto(0)"><div class="add-ico">＋</div></div>
+        <div class="photo-slot" id="slot1" onclick="triggerPhoto(1)"><div class="add-ico">＋</div></div>
+        <div class="photo-slot" id="slot2" onclick="triggerPhoto(2)"><div class="add-ico">＋</div></div>
+        <div class="photo-slot" id="slot3" onclick="triggerPhoto(3)"><div class="add-ico">＋</div></div>
+        <div class="photo-slot" id="slot4" onclick="triggerPhoto(4)"><div class="add-ico">＋</div></div>
+        <div class="photo-slot" id="slot5" onclick="triggerPhoto(5)"><div class="add-ico">＋</div></div>
+      </div>
+
+      <!-- Hidden file inputs -->
+      <input type="file" id="inputMain" accept="image/*" style="display:none" onchange="handlePhoto(event,'main')">
+      <input type="file" id="input0" accept="image/*" style="display:none" onchange="handlePhoto(event,0)">
+      <input type="file" id="input1" accept="image/*" style="display:none" onchange="handlePhoto(event,1)">
+      <input type="file" id="input2" accept="image/*" style="display:none" onchange="handlePhoto(event,2)">
+      <input type="file" id="input3" accept="image/*" style="display:none" onchange="handlePhoto(event,3)">
+      <input type="file" id="input4" accept="image/*" style="display:none" onchange="handlePhoto(event,4)">
+      <input type="file" id="input5" accept="image/*" style="display:none" onchange="handlePhoto(event,5)">
+
+      <!-- Edit form -->
+      <div class="edit-form">
+        <div class="fg">
+          <label class="fl">Ім'я або нікнейм</label>
+          <input class="fi" id="editName" type="text" maxlength="30" placeholder="Твоє ім'я">
+        </div>
+        <div class="fg">
+          <label class="fl">Вік</label>
+          <input class="fi" id="editAge" type="number" min="18" max="99" placeholder="18–99">
+        </div>
+        <div class="fg">
+          <label class="fl">Стать</label>
+          <div class="gbts">
+            <button class="gbt sel" onclick="pickGE(this)">👩 Жінка</button>
+            <button class="gbt" onclick="pickGE(this)">👨 Чоловік</button>
+            <button class="gbt" onclick="pickGE(this)">🌈 Інше</button>
+          </div>
+        </div>
+        <div class="fg">
+          <label class="fl">Місто</label>
+          <input class="fi" id="editCity" type="text" placeholder="Київ, Львів, Одеса...">
+        </div>
+        <div class="fg">
+          <label class="fl">Про себе</label>
+          <textarea class="fi" id="editBio" rows="4" placeholder="Розкажи трохи про себе..." style="resize:none;line-height:1.6"></textarea>
+        </div>
+        <div class="fg">
+          <label class="fl">Інтереси (через кому)</label>
+          <input class="fi" id="editTags" type="text" placeholder="Музика, Спорт, Кіно, Подорожі...">
+        </div>
+      </div>
+
+      <div class="edit-save">
+        <button class="btn btn-main" onclick="saveEdit()">💾 Зберегти зміни</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<!-- ══ BOTTOM NAV ══════════════════════════ -->
+<nav class="bottom-nav" id="bottomNav" style="display:none">
+  <div class="ni on" id="ni0" onclick="showPage('homePage');setNi(0)">
+    <div class="ni-ico">🏠</div><div class="ni-lbl">Головна</div>
+  </div>
+  <div class="ni" id="ni1" onclick="showPage('swipePage');setNi(1)">
+    <div class="ndot"></div>
+    <div class="ni-ico">💫</div><div class="ni-lbl">Стрічка</div>
+  </div>
+  <div class="ni ni-center" onclick="showPage('swipePage');setNi(1)">
+    <div class="ni-ico">❤️</div><div class="ni-lbl">Матчі</div>
+  </div>
+  <div class="ni" id="ni3" onclick="setNi(3)">
+    <div class="ndot"></div>
+    <div class="ni-ico">💬</div><div class="ni-lbl">Чати</div>
+  </div>
+  <div class="ni" id="ni4" onclick="showPage('profilePage');setNi(4)">
+    <div class="ni-ico">👤</div><div class="ni-lbl">Профіль</div>
+  </div>
+</nav>
+
+<!-- ══ MODAL ═══════════════════════════════ -->
+<div class="overlay" id="overlay" onclick="closeOuter(event)">
+  <div class="modal">
+    <button class="mclose" onclick="closeM()">✕</button>
+    <div class="mhandle"></div>
+    <h2>👻 Стати невидимкою</h2>
+    <p class="modal-sub">Зареєструйся — швидко та анонімно</p>
+    <div class="fg">
+      <label class="fl">Твоє ім'я або нікнейм</label>
+      <input class="fi" id="regName" type="text" placeholder="Аліна, Макс, Призрак..." maxlength="30">
+    </div>
+    <div class="fg">
+      <label class="fl">Вік</label>
+      <input class="fi" id="regAge" type="number" placeholder="18–99" min="18" max="99">
+    </div>
+    <div class="fg">
+      <label class="fl">Стать</label>
+      <div class="gbts">
+        <button class="gbt sel" onclick="pickG(this)">👩 Жінка</button>
+        <button class="gbt" onclick="pickG(this)">👨 Чоловік</button>
+        <button class="gbt" onclick="pickG(this)">🌈 Інше</button>
+      </div>
+    </div>
+    <div class="fg">
+      <label class="fl">Місто</label>
+      <input class="fi" id="regCity" type="text" placeholder="Київ, Львів, Одеса...">
+    </div>
+    <button class="btn btn-main" style="max-width:none;width:100%;margin-top:6px" onclick="register()">
+      ✈️ Продовжити у Telegram
+    </button>
+    <p class="mnote">Натискаючи кнопку, ти погоджуєшся з умовами використання</p>
+  </div>
+</div>
+
+<script>
+// ── BASE STATS ────────────────────────────
+const BASE_MEMBERS = 48000;
+const BASE_PAIRS   = 3200;
+
+// Format number nicely
+function fmtNum(n){
+  if(n>=1000) return (n/1000).toFixed(1).replace('.0','') + 'K+';
+  return n.toString();
+}
+
+// Animate number counting up
+function animateCount(el, from, to, ms){
+  const start = performance.now();
+  function step(now){
+    const p = Math.min((now - start) / ms, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+    el.textContent = fmtNum(Math.round(from + (to - from) * ease));
+    if(p < 1) requestAnimationFrame(step);
+    else el.textContent = fmtNum(to);
+  }
+  requestAnimationFrame(step);
+}
+
+// Load & display current stats from shared storage
+async function loadStats(){
+  try {
+    const r = await window.storage.get('nevidimka:stats', true);
+    const data = r ? JSON.parse(r.value) : {members: BASE_MEMBERS, pairs: BASE_PAIRS};
+    animateCount(document.getElementById('statMembers'), BASE_MEMBERS, data.members, 1200);
+    animateCount(document.getElementById('statPairs'),   BASE_PAIRS,   data.pairs,   1200);
+    // online = ~2% of members, random fluctuation
+    const online = Math.round(data.members * 0.025 + Math.random() * 50);
+    document.getElementById('onlineCount').textContent = online.toLocaleString('uk');
+  } catch(e) {
+    // storage not available, show defaults
+    document.getElementById('statMembers').textContent = fmtNum(BASE_MEMBERS);
+    document.getElementById('statPairs').textContent   = fmtNum(BASE_PAIRS);
+  }
+}
+
+// Increment stats on registration
+async function incrementStats(){
+  try {
+    let data = {members: BASE_MEMBERS, pairs: BASE_PAIRS};
+    try {
+      const r = await window.storage.get('nevidimka:stats', true);
+      if(r) data = JSON.parse(r.value);
+    } catch(e){}
+
+    data.members += 1;
+    // ~8% chance of new pair on each registration
+    if(Math.random() < 0.08) data.pairs += 1;
+
+    await window.storage.set('nevidimka:stats', JSON.stringify(data), true);
+
+    // Animate the update on landing page
+    animateCount(document.getElementById('statMembers'), data.members - 1, data.members, 800);
+    if(data.pairs > BASE_PAIRS) animateCount(document.getElementById('statPairs'), data.pairs - 1, data.pairs, 800);
+
+    // Flash glow effect
+    const els = document.querySelectorAll('.stat .sv');
+    els.forEach(el => {
+      el.style.transition = 'text-shadow .4s';
+      el.style.textShadow = '0 0 18px rgba(124,92,252,.9)';
+      setTimeout(() => el.style.textShadow = '', 700);
+    });
+  } catch(e){}
+}
+
+loadStats();
+
+// ── SWIPE DATA ───────────────────────────
+const profiles=[
+  {n:'Аліна, 23',m:'📍 Київ · онлайн',e:'🌸',bg:'linear-gradient(145deg,#1a0a40,#2d0b5a)',b:'Люблю живопис, подорожі та людей, які вміють сміятися над собою.'},
+  {n:'Максим, 27',m:'📍 Львів',e:'🌊',bg:'linear-gradient(145deg,#0a1540,#0b2a5a)',b:'Серфінг, гітара, кава вранці. Шукаю когось, з ким не нудно мовчати.'},
+  {n:'Соня, 25',m:'📍 Одеса · онлайн',e:'🌙',bg:'linear-gradient(145deg,#2a0a2a,#4a0b3a)',b:'Читаю книги, мрію про далекі країни. Вірю в любов з першого погляду.'},
+  {n:'Данило, 29',m:'📍 Харків',e:'🍃',bg:'linear-gradient(145deg,#0a2a1a,#0b4028)',b:'Природа, фотографія, тиша лісу. Шукаю щирість у відносинах.'},
+  {n:'Катя, 22',m:'📍 Дніпро · онлайн',e:'☀️',bg:'linear-gradient(145deg,#2a1a00,#4a2e00)',b:'Кіно, кава, балачки до ночі. Завжди смієтеся — значить, вже друзі.'},
+  {n:'Олег, 31',m:'📍 Київ',e:'🎸',bg:'linear-gradient(145deg,#001a2a,#003040)',b:'Музикант. Пишу пісні, граю на гітарі. Шукаю справжнє.'},
+  {n:'Марія, 24',m:'📍 Львів · онлайн',e:'🌺',bg:'linear-gradient(145deg,#2a0a1a,#4a0b2a)',b:'Танці, йога, смачна їжа. Вірю що найкраще ще попереду.'},
+];
+let swipeIdx=0;
+
+function nextSwipe(dir){
+  swipeIdx=(swipeIdx+1)%profiles.length;
+  const p=profiles[swipeIdx];
+  const card=document.getElementById('swipeCard');
+  card.style.transform=`translateX(${dir>0?'100%':dir<0?'-100%':'0'}) rotate(${dir*8}deg)`;
+  card.style.opacity='0';
+  card.style.transition='transform .25s,opacity .25s';
+  setTimeout(()=>{
+    document.getElementById('swipeEmoji').textContent=p.e;
+    document.getElementById('swipeAv').style.background=p.bg;
+    document.getElementById('swipeName').textContent=p.n;
+    document.getElementById('swipeMeta').textContent=p.m;
+    document.getElementById('swipeBio').textContent=p.b;
+    document.getElementById('swipeCounter').textContent=`Анкета ${swipeIdx+1} з ${profiles.length}`;
+    card.style.transition='none';
+    card.style.transform=`translateX(${dir>0?'-40%':dir<0?'40%':'0'})`;
+    card.style.opacity='0';
+    setTimeout(()=>{
+      card.style.transition='transform .3s,opacity .3s';
+      card.style.transform='translateX(0) rotate(0)';
+      card.style.opacity='1';
+    },30);
+  },240);
+
+  if(dir>0 && Math.random()>.6){
+    showMatch(p.n.split(',')[0]);
+  }
+}
+
+function showMatch(name){
+  const m=document.createElement('div');
+  m.style.cssText='position:fixed;top:60px;left:50%;transform:translateX(-50%);z-index:500;background:linear-gradient(135deg,#7c5cfc,#e040fb);color:#fff;font-family:Unbounded,sans-serif;font-size:13px;font-weight:700;padding:12px 22px;border-radius:50px;box-shadow:0 8px 28px rgba(124,92,252,.6);animation:fin .4s ease;white-space:nowrap';
+  m.textContent=`💜 Матч з ${name}!`;
+  document.body.appendChild(m);
+  setTimeout(()=>m.remove(),2500);
+}
+
+// ── PAGES ────────────────────────────────
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+// ── NAV ──────────────────────────────────
+function setNi(i){
+  document.querySelectorAll('.ni:not(.ni-center)').forEach(x=>x.classList.remove('on'));
+  const el=document.getElementById('ni'+i);
+  if(el) el.classList.add('on');
+}
+
+// ── MODAL ────────────────────────────────
+function openM(){
+  document.getElementById('overlay').classList.add('open');
+  document.body.style.overflow='hidden';
+}
+function closeM(){
+  document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
+}
+function closeOuter(e){if(e.target===document.getElementById('overlay'))closeM();}
+function pickG(b){
+  document.querySelectorAll('.gbt').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel');
+}
+
+// ── REGISTER ─────────────────────────────
+function register(){
+  const name=document.getElementById('regName').value.trim()||'nevidimka';
+  const age=document.getElementById('regAge').value||'?';
+  const city=document.getElementById('regCity').value.trim()||'Місто';
+  const gender=document.querySelector('.gbt.sel')?.textContent||'';
+
+  closeM();
+
+  // Increment shared stats
+  incrementStats();
+
+  // Show success screen
+  const ss=document.getElementById('successScreen');
+  ss.classList.remove('hidden');
+
+  // After 2.2s go to home page
+  setTimeout(()=>{
+    ss.classList.add('hidden');
+
+    // Update profile data
+    document.getElementById('userNameDisplay').textContent=name;
+    document.getElementById('profName').textContent=name;
+    document.getElementById('profSub').textContent=`📍 ${city} · ${age} років`;
+
+    // Set avatar emoji based on gender
+    const emo=gender.includes('Жінка')?'👩':gender.includes('Чоловік')?'👨':'🧑';
+    document.getElementById('avatarMe').textContent=emo;
+    document.getElementById('profAvatar').textContent=emo;
+
+    // Show app
+    document.getElementById('landingPage').classList.remove('active');
+    document.getElementById('bottomNav').style.display='flex';
+    showPage('homePage');
+    setNi(0);
+  },2200);
+}
+
+// ── TOAST ────────────────────────────────
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2400);
+}
+
+// ── OPEN EDIT ────────────────────────────
+function openEdit(){
+  // Pre-fill fields from current profile
+  document.getElementById('editName').value = document.getElementById('profName').textContent;
+  const sub = document.getElementById('profSub').textContent;
+  const ageMatch = sub.match(/(\d+) років/);
+  if(ageMatch) document.getElementById('editAge').value = ageMatch[1];
+  const cityMatch = sub.match(/📍 (.+?) ·/);
+  if(cityMatch) document.getElementById('editCity').value = cityMatch[1];
+
+  // Sync main photo
+  const profAv = document.getElementById('profAvatar');
+  const editMain = document.getElementById('editMainPhoto');
+  const img = profAv.querySelector('img');
+  const editMainEmoji = document.getElementById('editMainEmoji');
+  if(img){
+    editMainEmoji.style.display='none';
+    // Add preview image
+    let ei = editMain.querySelector('img');
+    if(!ei){ ei=document.createElement('img'); ei.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%'; editMain.appendChild(ei); }
+    ei.src = img.src;
+  } else {
+    editMainEmoji.style.display='';
+    editMainEmoji.textContent = profAv.textContent;
+    const ei=editMain.querySelector('img'); if(ei) ei.remove();
+  }
+
+  showPage('editPage');
+}
+
+// ── PHOTO HANDLING ────────────────────────
+function triggerPhoto(slot){
+  const id = slot==='main' ? 'inputMain' : 'input'+slot;
+  document.getElementById(id).click();
+}
+
+function handlePhoto(e, slot){
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 10*1024*1024){ showToast('❌ Файл занадто великий (макс 10MB)'); return; }
+
+  const reader = new FileReader();
+  reader.onload = function(ev){
+    const src = ev.target.result;
+    if(slot === 'main'){
+      // Update edit main photo
+      const wrap = document.getElementById('editMainPhoto');
+      let img = wrap.querySelector('img');
+      if(!img){
+        img = document.createElement('img');
+        img.style.cssText='position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%';
+        wrap.appendChild(img);
+      }
+      img.src = src;
+      document.getElementById('editMainEmoji').style.display='none';
+
+      // Also update profile avatar immediately
+      const av = document.getElementById('profAvatar');
+      av.textContent = '';
+      let pimg = av.querySelector('img');
+      if(!pimg){ pimg=document.createElement('img'); pimg.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%'; av.appendChild(pimg); }
+      pimg.src = src;
+
+      // Update home avatar
+      document.getElementById('avatarMe').textContent='';
+      document.getElementById('avatarMe').style.cssText='background:none;overflow:hidden;padding:0';
+      let himg = document.getElementById('avatarMe').querySelector('img');
+      if(!himg){ himg=document.createElement('img'); himg.style.cssText='width:100%;height:100%;object-fit:cover;border-radius:50%'; document.getElementById('avatarMe').appendChild(himg); }
+      himg.src = src;
+
+      showToast('✅ Головне фото оновлено!');
+    } else {
+      // Grid slot
+      const slot_el = document.getElementById('slot'+slot);
+      slot_el.innerHTML='';
+      const img = document.createElement('img');
+      img.src = src;
+      slot_el.appendChild(img);
+
+      // Add delete button
+      const del = document.createElement('button');
+      del.className='del-btn';
+      del.textContent='✕';
+      del.onclick = function(ev){ ev.stopPropagation(); slot_el.innerHTML='<div class="add-ico">＋</div>'; slot_el.onclick=function(){triggerPhoto(slot);}; };
+      slot_el.appendChild(del);
+      slot_el.onclick = null; // disable add on click when has image
+
+      showToast('📸 Фото додано!');
+    }
+  };
+  reader.readAsDataURL(file);
+  e.target.value=''; // reset so same file can be selected again
+}
+
+// ── SAVE EDIT ────────────────────────────
+function saveEdit(){
+  const name = document.getElementById('editName').value.trim() || 'nevidimka';
+  const age  = document.getElementById('editAge').value || '?';
+  const city = document.getElementById('editCity').value.trim() || 'Місто';
+  const gender = document.querySelector('.gbt.sel')?.textContent || '';
+
+  document.getElementById('profName').textContent = name;
+  document.getElementById('profSub').textContent  = `📍 ${city} · ${age} років`;
+  document.getElementById('userNameDisplay').textContent = name;
+
+  // Update emoji avatar if no photo
+  const av = document.getElementById('profAvatar');
+  if(!av.querySelector('img')){
+    const emo = gender.includes('Жінка')?'👩':gender.includes('Чоловік')?'👨':'🧑';
+    av.textContent = emo;
+    document.getElementById('avatarMe').textContent = emo;
+    document.getElementById('editMainEmoji').textContent = emo;
+  }
+
+  showToast('✅ Профіль збережено!');
+  setTimeout(()=>{ showPage('profilePage'); setNi(4); }, 1200);
+}
+
+function pickGE(b){
+  document.querySelectorAll('.gbt').forEach(x=>x.classList.remove('sel'));
+  b.classList.add('sel');
+}
+
+// ── LOGOUT ───────────────────────────────
+function logout(){
+  document.getElementById('bottomNav').style.display='none';
+  showPage('landingPage');
+}
+</script>
+</body>
+</html>
